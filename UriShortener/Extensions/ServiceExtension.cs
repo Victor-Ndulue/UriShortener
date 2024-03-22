@@ -18,7 +18,7 @@ public static class ServiceExtension
     {
         services.AddDbContext<DataContext>(opts =>
         {
-            opts.UseSqlServer(configuration["ConnectionStrings:Default"]);
+            opts.UseSqlServer(Environment.GetEnvironmentVariable("ConnectionStrings"));
         });
     }
     public static void RegisterFluentValidation(this IServiceCollection services)
