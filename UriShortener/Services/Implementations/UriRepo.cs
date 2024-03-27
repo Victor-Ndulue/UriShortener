@@ -21,8 +21,7 @@ public class UriRepo : IUriRepo
         var baseUrl = "https://short.ly/";
         var shortUrl = baseUrl + addUriDto.prefferedPath;
         var alreadyShortened = await _uris.AnyAsync
-            (x => (x.MainUrl == addUriDto.mainUrl
-            && x.ShortUrl == shortUrl)
+            (x =>  x.ShortUrl == shortUrl
             || addUriDto.mainUrl.StartsWith(baseUrl));
         if (alreadyShortened) { return ReturnObject<UriDetailDto>.FailureResponse("url already exists or shortened"); }
 
