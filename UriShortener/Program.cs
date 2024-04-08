@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.RegisterFluentValidation();
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddControllers();
+builder.Services.ConfigureControllers();
 builder.Services.RegisterServices();
 builder.Services.ConfigureDataContext(builder.Configuration);
 builder.Services.ConfigureCorsPolicy();

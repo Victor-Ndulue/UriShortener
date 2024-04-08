@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using UriShortener.Data;
 using UriShortener.Helpers.FluentValidation.Validations;
 using UriShortener.Helpers.Requests;
@@ -20,6 +21,19 @@ public static class ServiceExtension
                 .AllowCredentials());
 
         });
+    }
+    public static void ConfigureControllers(this IServiceCollection services)
+    {
+        services.AddControllers(
+                    config =>
+                    {
+                        config.RespectBrowserAcceptHeader = true;
+                    })
+                    .AddJsonOptions(options =>
+                    {
+                        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    }).AddXmlDataContractSerializerFormatters();
     }
     public static void RegisterServices(this IServiceCollection services)
     {
