@@ -19,17 +19,18 @@ public class UriRepo : IUriRepo
     public async Task<ResponseObject<UriDetailDto>> AddUri(AddUriDto addUriDto)
     {
         var baseUrl = "https://short.ly/";
-        var shortUrl = baseUrl + addUriDto.prefferedPath;
+        if (addUriDto.preferredPath is null) { addUriDto.preferredPath = GenerateRandomPath(); }
+            var shortUrl = baseUrl + addUriDto.preferredPath;
         var alreadyShortened = await _uris.AnyAsync
             (x => x.ShortUrl == shortUrl
             || addUriDto.mainUrl.StartsWith(baseUrl));
-        if (alreadyShortened) { return ReturnObject<UriDetailDto>.FailureResponse("url already exists or shortened"); }
+        if (alreadyShortened) { return ReturnObject<UriDetailDto>.FailureResponse($"Short url {shortUrl} already exists or shortened"); }
 
         var uriDetail = new UriDetail
         {
             Id = Guid.NewGuid(),
             MainUrl = addUriDto.mainUrl,
-            ShortUrl = baseUrl + addUriDto.prefferedPath,
+            ShortUrl = baseUrl + addUriDto.preferredPath,
             DateCreated = DateTime.UtcNow.AddHours(1)
         };
         await _uris.AddAsync(uriDetail);
@@ -62,5 +63,12 @@ public class UriRepo : IUriRepo
             };
             return ReturnObject<UriDetailDto>.SuccessResponse(data: uriDetailDto);
         }
+    }
+    private string GenerateRandomPath()
+    {
+        var randomPath = Guid.NewGuid()
+            .ToString()
+            .Substring(4, 8);
+        return randomPath;
     }
 }

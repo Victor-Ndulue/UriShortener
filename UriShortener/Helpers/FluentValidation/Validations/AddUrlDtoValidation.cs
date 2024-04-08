@@ -9,6 +9,6 @@ public class AddUrlDtoValidation : AbstractValidator<AddUriDto>
     public AddUrlDtoValidation()
     {
         RuleFor(model => model.mainUrl).ValidateUrl();
-        RuleFor(model => model.prefferedPath).NotNull();
+        RuleFor(model => model.preferredPath).NotNull();
     }
 }
