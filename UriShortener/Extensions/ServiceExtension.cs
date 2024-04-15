@@ -14,8 +14,9 @@ public static class ServiceExtension
     {
         services.AddCors(opts =>
         {
+            var allowedOrigin = Environment.GetEnvironmentVariable("UriOrigin");
             opts.AddPolicy("CorsPolicy", builder =>
-                builder.AllowAnyOrigin()
+                builder.WithOrigins(allowedOrigin)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
