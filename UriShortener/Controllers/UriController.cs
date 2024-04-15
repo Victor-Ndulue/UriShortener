@@ -20,8 +20,18 @@ public class UriController : ControllerBase
         _logger = logger;
         _uriRepo = uriRepo;
     }
+    [HttpGet("{shortUrl}")]
+    public async Task<IActionResult> RedirectToMainUrl([FromQuery]string shortUrl)
+    {
+        var urlResult = await _uriRepo.GetUriDetails(shortUrl);
 
-    [HttpGet(Name = "get-uri-details")]
+        return urlResult.IsSuccessStatusCode switch
+        {
+            true when urlResult.Data is not null => Redirect(urlResult.Data.MainUrl),
+            _ => NotFound()
+        };
+    }
+    [HttpGet, Route("get-uri-details")]
     public async Task<IActionResult> GetUriDetails([FromQuery] GetByUrlDto urlDto)
     {
         var shortUrl = urlDto.url;
