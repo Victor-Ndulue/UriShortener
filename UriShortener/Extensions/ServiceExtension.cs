@@ -17,10 +17,10 @@ public static class ServiceExtension
             var allowedOrigin = Environment.GetEnvironmentVariable("UriOrigin");
             string[] allowedOrigins = { "https://localhost:7165/","http://localhost:5210", allowedOrigin};
             opts.AddPolicy("CorsPolicy", builder =>
-                builder.WithOrigins(allowedOrigins)
+                //builder.WithOrigins(allowedOrigins)
+                builder.AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+                .AllowAnyHeader());
 
         });
     }
