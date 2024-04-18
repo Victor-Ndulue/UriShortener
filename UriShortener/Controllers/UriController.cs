@@ -20,7 +20,7 @@ public class UriController : ControllerBase
         _logger = logger;
         _uriRepo = uriRepo;
     }
-    [HttpOptions, Route("{shortUrl}")]
+    [HttpGet, Route("{shortUrl}")]
     public async Task<IActionResult> RedirectToMainUrl(string shortUrl)
     {
         var urlResult = await _uriRepo.GetUriDetails(shortUrl);
