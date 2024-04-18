@@ -6,6 +6,6 @@ namespace UriShortener.Services.Abstractions;
 
 public interface IUriRepo
 {
-    Task<ResponseObject<UriDetailDto>> AddUri(AddUriDto addUriDto);
-    Task<ResponseObject<UriDetailDto>> GetUriDetails(string shortUri);
+    Task<ReturnObject<UriDetailDto>> AddUri(AddUriDto addUriDto);
+    Task<ReturnObject<UriDetailDto>> GetUriDetails(string shortUri);
 }

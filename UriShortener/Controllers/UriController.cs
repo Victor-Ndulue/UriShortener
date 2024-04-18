@@ -6,6 +6,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace UriShortener.Controllers;
 
@@ -27,7 +28,7 @@ public class UriController : ControllerBase
 
         return urlResult.IsSuccessStatusCode switch
         {
-            true when urlResult.Data is not null => Redirect(urlResult.Data.MainUrl),
+            true when !urlResult.Data.MainUrl.IsNullOrEmpty()  => Redirect(urlResult.Data.MainUrl),
             _ => NotFound()
         };
     }

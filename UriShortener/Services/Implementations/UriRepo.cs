@@ -17,14 +17,19 @@ public class UriRepo : IUriRepo
         _uris = dataContext.UriDetails;
         _dataContext = dataContext;
     }
-    public async Task<ResponseObject<UriDetailDto>> AddUri(AddUriDto addUriDto)
+    public async Task<ReturnObject<UriDetailDto>> AddUri(AddUriDto addUriDto)
     {
         if (addUriDto.preferredPath is null) { addUriDto.preferredPath = GenerateRandomPath(); }
         var shortUrl = GetShortUrl(addUriDto.preferredPath) ;
         var alreadyShortened = await _uris.AnyAsync
             (x => x.ShortUrl == shortUrl
             || addUriDto.mainUrl.StartsWith(baseUrl));
-        if (alreadyShortened) { return ReturnObject<UriDetailDto>.FailureResponse($"Short url {shortUrl} already exists or shortened"); }
+        if (alreadyShortened) 
+        {
+            UriDetailDto emptyUrlDetail = new();
+            string errorMsg = $"Short url {shortUrl} already exists or shortened";
+            return ReturnObject<UriDetailDto>.FailureResponse(errorMsg, emptyUrlDetail); 
+        }
 
         var uriDetail = new UriDetail
         {
@@ -44,7 +49,7 @@ public class UriRepo : IUriRepo
         return ReturnObject<UriDetailDto>.SuccessResponse(data: uriDetailDto);
     }
 
-    public async Task<ResponseObject<UriDetailDto>> GetUriDetails(string preferredPath)
+    public async Task<ReturnObject<UriDetailDto>> GetUriDetails(string preferredPath)
     {
         var shortUrl = GetShortUrl(preferredPath);
         var uriDetail = await _uris.Where(uri => uri.ShortUrl.Equals(shortUrl))
@@ -52,7 +57,10 @@ public class UriRepo : IUriRepo
             .FirstOrDefaultAsync();
         if (uriDetail is null)
         {
-            return ReturnObject<UriDetailDto>.SuccessResponse();
+            UriDetailDto emptyUrlDetail = new();
+            string errorMsg = $"Link not found";
+            return ReturnObject<UriDetailDto>.FailureResponse(errorMsg, emptyUrlDetail);
+
         }
         else
         {
