@@ -11,6 +11,7 @@ public class UriRepo : IUriRepo
 {
     private readonly DbSet<UriDetail> _uris;
     private readonly DataContext _dataContext;
+    private const string baseUrl = "https://urishortener.onrender.com/";
     public UriRepo(DataContext dataContext)
     {
         _uris = dataContext.UriDetails;
@@ -18,9 +19,8 @@ public class UriRepo : IUriRepo
     }
     public async Task<ResponseObject<UriDetailDto>> AddUri(AddUriDto addUriDto)
     {
-        var baseUrl = "https://short.ly/";
         if (addUriDto.preferredPath is null) { addUriDto.preferredPath = GenerateRandomPath(); }
-            var shortUrl = baseUrl + addUriDto.preferredPath;
+        var shortUrl = GetShortUrl(addUriDto.preferredPath) ;
         var alreadyShortened = await _uris.AnyAsync
             (x => x.ShortUrl == shortUrl
             || addUriDto.mainUrl.StartsWith(baseUrl));
@@ -44,11 +44,12 @@ public class UriRepo : IUriRepo
         return ReturnObject<UriDetailDto>.SuccessResponse(data: uriDetailDto);
     }
 
-    public async Task<ResponseObject<UriDetailDto>> GetUriDetails(string shortUri)
+    public async Task<ResponseObject<UriDetailDto>> GetUriDetails(string preferredPath)
     {
-        var uriDetailData = _uris.Where(uri => uri.ShortUrl.Equals(shortUri))
-            .AsNoTracking();
-        var uriDetail = uriDetailData.FirstOrDefault();
+        var shortUrl = GetShortUrl(preferredPath);
+        var uriDetail = await _uris.Where(uri => uri.ShortUrl.Equals(shortUrl))
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
         if (uriDetail is null)
         {
             return ReturnObject<UriDetailDto>.SuccessResponse();
@@ -70,5 +71,10 @@ public class UriRepo : IUriRepo
             .ToString()
             .Substring(4, 8);
         return randomPath;
+    }
+    private string GetShortUrl(string preferredPath)
+    {        
+        string shortUrl = baseUrl + preferredPath;
+        return shortUrl;
     }
 }

@@ -3,6 +3,6 @@
 namespace UriShortener.Helpers.Requests;
 public record AddUriDto 
 {
-    public string mainUrl { get; init; }
-    public string preferredPath { get; set; }
+    public string? mainUrl { get; init; }
+    public string? preferredPath { get; set; }
 }

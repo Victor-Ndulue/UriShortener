@@ -2,5 +2,5 @@
 
 public record GetByUrlDto 
 {
-    public string url { get; set; }
+    public string prefferedPath { get; set; }
 }

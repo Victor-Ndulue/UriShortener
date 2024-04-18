@@ -8,7 +8,7 @@ namespace UriShortener.Helpers.FluentValidation.Validations
     {
         public GetByUrlDtoValidation()
         {
-            RuleFor(model=>model.url).ValidateUrl();
+            RuleFor(model=>model.prefferedPath).NotEmpty();
         }
     }
 }

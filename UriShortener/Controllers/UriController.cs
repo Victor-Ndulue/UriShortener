@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 namespace UriShortener.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+//[Route("[controller]")]
 public class UriController : ControllerBase
 {     
     private readonly ILogger<UriController> _logger;
@@ -20,8 +20,8 @@ public class UriController : ControllerBase
         _logger = logger;
         _uriRepo = uriRepo;
     }
-    [HttpGet("{shortUrl}")]
-    public async Task<IActionResult> RedirectToMainUrl([FromQuery]string shortUrl)
+    [HttpOptions, Route("{shortUrl}")]
+    public async Task<IActionResult> RedirectToMainUrl(string shortUrl)
     {
         var urlResult = await _uriRepo.GetUriDetails(shortUrl);
 
@@ -31,15 +31,14 @@ public class UriController : ControllerBase
             _ => NotFound()
         };
     }
-    [HttpGet, Route("get-uri-details")]
-    public async Task<IActionResult> GetUriDetails([FromQuery] GetByUrlDto urlDto)
+    [HttpGet, Route("get-uri-details/{preferredPath}")]
+    public async Task<IActionResult> GetUriDetails(string preferredPath)
     {
-        var shortUrl = urlDto.url;
-        var result = await _uriRepo.GetUriDetails(shortUrl);
+        var result = await _uriRepo.GetUriDetails(preferredPath);
         return StatusCode(result.StatusCode, result);
     }
     [HttpPost, Route("create-url")]
-    public async Task<IActionResult> Createuri(AddUriDto dto)
+    public async Task<IActionResult> Createuri([FromBody] AddUriDto dto)
     {
         var result = await _uriRepo.AddUri(dto);
         return StatusCode(result.StatusCode, result);
